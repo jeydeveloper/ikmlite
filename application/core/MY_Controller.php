@@ -59,7 +59,7 @@ class MY_Admin extends MY_Controller {
 					array(
 						'label' => 'Button',
                         'url_link' => site_url('backend_button/button/page_content_ajax'),
-                        'icon' => '<i class="glyph-icon icon-shopping-cart"></i>',
+                        'icon' => '<i class="glyph-icon icon-dot-circle-o"></i>',
 					),
 					array(
 						'label' => 'Setting',
@@ -67,14 +67,14 @@ class MY_Admin extends MY_Controller {
                         'icon' => '<i class="glyph-icon icon-elusive-cog"></i>',
 					),
                     array(
-                        'label' => 'Transaksi',
+                        'label' => 'Laporan Transaksi',
                         'url_link' => site_url('backend_transaksi/transaksi/page_content_ajax'),
-                        'icon' => '<i class="glyph-icon icon-elusive-cog"></i>',
+                        'icon' => '<i class="glyph-icon icon-line-chart"></i>',
                     ),
                     array(
                         'label' => 'Admin User',
                         'url_link' => site_url('backend_admin/admin/page_content_ajax'),
-                        'icon' => '<i class="glyph-icon icon-elusive-cog"></i>',
+                        'icon' => '<i class="glyph-icon icon-typicons-users-outline"></i>',
                     ),
 //                    array(
 //                        'label' => 'Admin User Level',

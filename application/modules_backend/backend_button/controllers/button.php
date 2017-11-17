@@ -33,17 +33,17 @@ class Button extends MY_Admin {
 				'no_order'				=> 0,
 			),
 			array(
-				'title_header_column' 	=> 'button',
+				'title_header_column' 	=> 'Char Button',
 				'field_name' 			=> $this->_table_field_pref . 'butt_data',
 				'no_order'				=> 1,
 			),
             array(
-                'title_header_column' 	=> 'button',
+                'title_header_column' 	=> 'Value',
                 'field_name' 			=> $this->_table_field_pref . 'butt_value',
                 'no_order'				=> 2,
             ),
             array(
-                'title_header_column' 	=> 'button',
+                'title_header_column' 	=> 'Status',
                 'field_name' 			=> $this->_table_field_pref . 'butt_status',
                 'no_order'				=> 3,
             ),
