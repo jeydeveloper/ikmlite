@@ -75,7 +75,12 @@
     </div>
     <div class="panel">
         <div class="panel-body">
+
+            <h3 class="title-hero">Grafik</h3>
             <div id="datacontent_filter" class="example-box-wrapper"></div>
+
+            <h3 class="title-hero">Data Grid</h3>
+            <div id="datacontent_filter_grid" class="example-box-wrapper"></div>
 
             <!--<div id="datacontent_filter_wtc" class="example-box-wrapper">
                 <div class="col-sm-12">
@@ -132,6 +137,10 @@
             console.log('hai');
         });
 
+        $( "#datacontent_filter_grid" ).load('<?php echo $page_content_ajax_grid; ?>', function(){
+            console.log('hai');
+        });
+
         $('#btn_preview').click(function(e) {
             e.preventDefault();
             var param = {
@@ -140,6 +149,16 @@
                 'data_type'         : 'html',
                 'callback'          : function(data) {
                     $('#datacontent_filter').empty().append(data);
+                }
+            };
+            MYAPP.doAjax.process(param.url_ajax_action, param.parameter, param.callback, param.data_type);
+
+            var param = {
+                'url_ajax_action'   : '<?php echo $page_content_ajax_grid; ?>',
+                'parameter'         : $('#form_datacontent_filter').serialize(),
+                'data_type'         : 'html',
+                'callback'          : function(data) {
+                    $('#datacontent_filter_grid').empty().append(data);
                 }
             };
             MYAPP.doAjax.process(param.url_ajax_action, param.parameter, param.callback, param.data_type);

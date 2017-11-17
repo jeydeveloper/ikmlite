@@ -5,6 +5,10 @@ class Transaksi extends MY_Admin
     private $_template = 'template_admin/main';
     private $_module_controller = 'backend_transaksi/transaksi/';
 
+    private $_table_name 		= 'transaksi';
+    private $_table_field_pref 	= '';
+    private $_table_pk 			= 'trans_id';
+
     private $_page_title = 'IKM Lite : Admin Laporan Transaksi';
     private $_page_content_info = array(
         'title' => 'Data Admin Transaksi',
@@ -18,6 +22,48 @@ class Transaksi extends MY_Admin
             redirect('backend_login/login');
             exit();
         }
+    }
+
+    private function get_additional_field() {
+        $additional_field = array(
+            array(
+                'field_name' 			=> 'butt_data',
+                'just_info' 			=> true,
+            ),
+            array(
+                'field_name' 			=> 'butt_value',
+                'just_info' 			=> true,
+            ),
+            array(
+                'field_name' 			=> 'butt_status',
+                'just_info' 			=> true,
+            ),
+        );
+
+        return $additional_field;
+    }
+
+    private function get_show_column() {
+        $column_list = array(
+            array(
+                'title_header_column' 	=> 'No.',
+                'field_name' 			=> $this->_table_field_pref . 'butt_id',
+                'show_no_static' 		=> true,
+                'no_order'				=> 0,
+            ),
+            array(
+                'title_header_column' 	=> 'Tanggal',
+                'field_name' 			=> $this->_table_field_pref . 'trans_tgl',
+                'no_order'				=> 1,
+            ),
+            array(
+                'title_header_column' 	=> 'Status',
+                'field_name' 			=> $this->_table_field_pref . 'butt_status',
+                'no_order'				=> 2,
+            ),
+        );
+
+        return $column_list;
     }
 
     function index()
@@ -46,6 +92,7 @@ class Transaksi extends MY_Admin
         $this->_data['option_user'] = $this->adminuserx->get_option();
 
         $this->_data['page_content_ajax'] = site_url($this->_module_controller . 'page_content_ajax');
+        $this->_data['page_content_ajax_grid'] = site_url($this->_module_controller . 'page_content_ajax_grid');
         $this->_data['ajax_lists_filter'] = site_url('backend_transaksi/transaksi/lists_ajax_filter');
 
         $this->_data['info_page'] = $this->_page_content_info;
@@ -72,6 +119,65 @@ class Transaksi extends MY_Admin
         $this->_data['tahun'] = date('Y');
 
         $this->load->view('lists_filter', $this->_data);
+    }
+
+    function page_content_ajax_grid() {
+        $dateRange = $this->input->post('trans_tgl');
+        $param = '';
+        if(!empty($dateRange)) {
+            list($range1, $range2) = explode(' - ', $dateRange);
+            $param = "?range1=$range1&range2=$range2";
+        }
+
+        $this->_data['ajax_lists_grid'] 			= site_url($this->_module_controller . 'lists_ajax_grid' . $param);
+        $this->_data['column_list'] = $this->get_show_column();
+        $this->_data['info_page'] = $this->_page_content_info;
+        $this->load->view('lists_grid', $this->_data);
+    }
+
+    //--- used by datatable source data -------
+    function lists_ajax_grid() {
+        $this->load->helper('mydatatable');
+        $table 		= $this->db->dbprefix . $this->_table_name;
+        $table 		.= ' LEFT JOIN ' . $this->db->dbprefix . 'button ON (trans_butt_id = butt_id) ';
+        $primaryKey = $this->_table_pk;
+        $column_list = $this->get_show_column();
+        $columns = array();
+        $cnt = 0;
+        foreach ($column_list as $key => $value) {
+            $columns[] = array(
+                'db' 				=> $value['field_name'],
+                'dt' 				=> !empty($value['no_order']) ? $value['no_order'] : $cnt,
+                'formatter' 		=> !empty($value['result_format']) ? $value['result_format'] : '',
+                'show_no_static' 	=> !empty($value['show_no_static']) ? $value['show_no_static'] : '',
+                'just_info' 		=> !empty($value['just_info']) ? $value['just_info'] : '',
+                'alias' 			=> !empty($value['alias']) ? $value['alias'] : '',
+            );
+            $cnt++;
+        }
+
+        $additional_field = $this->get_additional_field();
+        if(!empty($additional_field)) {
+            foreach ($additional_field as $key => $value) {
+                $columns[] = array(
+                    'db' 				=> $value['field_name'],
+                    'dt' 				=> !empty($value['no_order']) ? $value['no_order'] : $cnt,
+                    'formatter' 		=> !empty($value['result_format']) ? $value['result_format'] : '',
+                    'show_no_static' 	=> !empty($value['show_no_static']) ? $value['show_no_static'] : '',
+                    'just_info' 		=> !empty($value['just_info']) ? $value['just_info'] : '',
+                    'alias' 			=> !empty($value['alias']) ? $value['alias'] : '',
+                );
+                $cnt++;
+            }
+        }
+
+        $whereResult 	= '';
+        $whereAll 		= '';
+        if(!empty($_GET['range1']) AND !empty($_GET['range2'])) {
+            $whereAll = 'DATE_FORMAT(trans_tgl, "%Y-%m-%d") BETWEEN "'.$_GET['range1'].'" AND "'.$_GET['range2'].'"';
+        }
+        //$whereAll .= ' ORDER BY trans_tgl';
+        generateDataTable($table, $primaryKey, $columns, $whereResult, $whereAll);
     }
 
     public function getDataChart($dateRange = '')
@@ -110,7 +216,7 @@ class Transaksi extends MY_Admin
         $where = "DATE_FORMAT(trans_tgl, '%Y') = '" . date('Y') . "'";
         if(!empty($dateRange)) {
             list($range1, $range2) = explode(' - ', $dateRange);
-            $where = 'trans_tgl BETWEEN "'.$range1.'" AND "'.$range2.'"';
+            $where = 'DATE_FORMAT(trans_tgl, "%Y-%m-%d") BETWEEN "'.$range1.'" AND "'.$range2.'"';
         }
 
         $sql = "
