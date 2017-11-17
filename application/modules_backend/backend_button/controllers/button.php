@@ -8,7 +8,7 @@ class Button extends MY_Admin {
 	private $_table_pk 			= 'butt_id';
 	private $_model_crud 		= 'button_model';
 
-	private $_page_title 		= 'Antrian : Admin Button';
+	private $_page_title 		= 'IKM Lite : Admin Button';
 	private $_page_content_info	= array(
 		'title' => 'Data Button',
 		'desc' 	=> 'List Button',

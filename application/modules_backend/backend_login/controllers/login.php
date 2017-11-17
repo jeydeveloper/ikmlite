@@ -25,7 +25,7 @@ class Login extends MY_Admin {
 		}
 
 		//using lib template
-		$this->template->set('title', 'Antrian : Admin Login');
+		$this->template->set('title', 'IKM Lite : Admin Login');
 		$this->template->set('assets', $this->_data['assets']);
 		$this->template->load('template_login/login', 'login', $this->_data);
 	}

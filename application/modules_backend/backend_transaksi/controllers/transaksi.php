@@ -5,7 +5,7 @@ class Transaksi extends MY_Admin
     private $_template = 'template_admin/main';
     private $_module_controller = 'backend_transaksi/transaksi/';
 
-    private $_page_title = 'Antrian : Admin Laporan Transaksi';
+    private $_page_title = 'IKM Lite : Admin Laporan Transaksi';
     private $_page_content_info = array(
         'title' => 'Data Admin Transaksi',
         'desc' => 'Grafik laporan Transaksi',

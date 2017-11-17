@@ -8,7 +8,7 @@ class Setting extends MY_Admin {
 	private $_table_pk 			= 'id_Setting';
 	private $_model_crud 		= 'setting_model';
 
-	private $_page_title 		= 'Antrian : Admin Setting';
+	private $_page_title 		= 'IKM Lite : Admin Setting';
 	private $_page_content_info	= array(
 		'title' => 'Data Setting',
 		'desc' 	=> 'List Setting',

@@ -8,7 +8,7 @@ class Adminlevel extends MY_Admin {
 	private $_table_pk 			= 'aulv_id';
 	private $_model_crud 		= 'adminuserlevel_model';
 
-	private $_page_title 		= 'Antrian : Admin User Level List';
+	private $_page_title 		= 'IKM Lite : Admin User Level List';
 	private $_page_content_info	= array(
 		'title' => 'Data Admin User Level',
 		'desc' 	=> 'List user admin level',

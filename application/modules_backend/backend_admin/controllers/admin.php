@@ -8,7 +8,7 @@ class Admin extends MY_Admin {
 	private $_table_pk 			= 'admusr_id';
 	private $_model_crud 		= 'adminuser_model';
 
-	private $_page_title 		= 'Antrian : Admin User List';
+	private $_page_title 		= 'IKM Lite : Admin User List';
 	private $_page_content_info	= array(
 		'title' => 'Data Admin User',
 		'desc' 	=> 'List user admin',
