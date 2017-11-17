@@ -172,7 +172,7 @@ class Transaksi extends MY_Admin
         }
 
         $whereResult 	= '';
-        $whereAll 		= '';
+        $whereAll = "DATE_FORMAT(trans_tgl, '%Y') = '" . date('Y') . "'";
         if(!empty($_GET['range1']) AND !empty($_GET['range2'])) {
             $whereAll = 'DATE_FORMAT(trans_tgl, "%Y-%m-%d") BETWEEN "'.$_GET['range1'].'" AND "'.$_GET['range2'].'"';
         }
