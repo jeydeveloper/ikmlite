@@ -130,6 +130,7 @@ class Transaksi extends MY_Admin
         }
 
         $this->_data['ajax_lists_grid'] 			= site_url($this->_module_controller . 'lists_ajax_grid' . $param);
+        $this->_data['link_export_excel'] 			= site_url($this->_module_controller . 'page_export_excel' . $param);
         $this->_data['column_list'] = $this->get_show_column();
         $this->_data['info_page'] = $this->_page_content_info;
         $this->load->view('lists_grid', $this->_data);
@@ -243,6 +244,37 @@ class Transaksi extends MY_Admin
         }
 //        print_r($ret);
         return $ret;
+    }
+
+    function page_export_excel() {
+        $filename = 'antrian_jcl_' . str_replace('-', '', date('Y-m-d')) . '.xls';
+        header("Content-type: application/octet-stream");
+        header("Content-Disposition: attachment; filename = " . $filename);
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $this->_data['data_master'] = [];
+
+        $where = "DATE_FORMAT(trans_tgl, '%Y') = '" . date('Y') . "'";
+        if(!empty($_GET['range1']) AND !empty($_GET['range2'])) {
+            $where = 'DATE_FORMAT(trans_tgl, "%Y-%m-%d") BETWEEN "'.$_GET['range1'].'" AND "'.$_GET['range2'].'"';
+        }
+
+        $sql = "
+            SELECT * 
+            FROM transaksi 
+            JOIN button ON (trans_butt_id = butt_id)
+            WHERE $where
+            ORDER BY trans_tgl
+        ";
+        $query = $this->db->query($sql);
+        if ($query->num_rows() > 0) {
+            $this->_data['data_master'] = $query->result_array();
+        }
+
+        $this->template->set('title', 'IKM Lite : Export Excel Laporan Transaksi');
+        $this->template->set('assets', $this->_data['assets']);
+        $this->template->load('template_export/export_excel', 'lists_exportexcel', $this->_data);
     }
 
 }

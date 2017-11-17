@@ -42,4 +42,9 @@
         </tr>
         </thead>
     </table>
+    <div class="form-group">
+        <div class="col-sm-6 col-md-offset-6 text-right">
+            <a href="<?php echo $link_export_excel; ?>" class="btn btn-blue-alt">Excel</a>
+        </div>
+    </div>
 </div>
