@@ -45,6 +45,13 @@ class Ketidakpuasan extends MY_Admin {
             array(
                 'title_header_column' 	=> 'Icon',
                 'field_name' 			=> $this->_table_field_pref . 'ktps_icon',
+                'result_format'			=> function( $d, $row ) {
+                	$ret = '';
+                	if(!empty($d)) {
+                		$ret = '<img src="'.$d.'" width="100">';
+                	}
+                	return $ret;
+                },
                 'no_order'				=> 3,
             ),
 			array(
@@ -88,7 +95,7 @@ class Ketidakpuasan extends MY_Admin {
                 'db_field' 		=> $this->_table_field_pref . 'ktps_keterangan',
                 'db_process'	=> true,
                 'input_type'	=> 'text',
-                'input_attr'	=> 'type="text" data-parsley-minlength="1" class="form-control" placeholder="Keterangan..."',
+                'input_attr'	=> 'type="text" class="form-control" placeholder="Keterangan..."',
                 // 'required'		=> 'required',
                 'data_source'	=> '',
                 'data_edit'		=> array(
@@ -100,8 +107,8 @@ class Ketidakpuasan extends MY_Admin {
                 'label' 		=> 'Icon',
                 'db_field' 		=> $this->_table_field_pref . 'ktps_icon',
                 'db_process'	=> true,
-                'input_type'	=> 'text',
-                'input_attr'	=> 'type="text" data-parsley-minlength="1" class="form-control" placeholder="Icon..."',
+                'input_type'	=> 'file',
+                'input_attr'	=> 'type="file" class="form-control" placeholder="Icon..."',
                 // 'required'		=> 'required',
                 'data_source'	=> '',
                 'data_edit'		=> array(
@@ -180,6 +187,7 @@ class Ketidakpuasan extends MY_Admin {
 
 	function add_ajax() {
 		$this->_data['ajax_action_add'] 	= site_url($this->_module_controller . 'do_add_ajax');
+		$this->_data['ajax_image_add'] 	= site_url($this->_module_controller . 'do_image_ajax');
 		$this->_data['input_list'] 			= $this->get_input_field_new();
 		$this->load->view('form_add', $this->_data);
 	}
@@ -193,6 +201,23 @@ class Ketidakpuasan extends MY_Admin {
 
 		foreach ($input_list as $key => $value) {
 			if(!empty($value['db_process']) AND $value['db_process']) {
+				if($value['input_type'] == 'file') {
+					if(!empty($_POST['filenames'][0])) {
+						$expl = explode('.', $_POST['filenames'][0]);
+						if(in_array($expl[1], ['ico','png','jpg'])) {
+							$urlImage = site_url('assets/backstage/upload/'.$_POST['filenames'][0]);
+							// $image = file_get_contents(addslashes($_FILES[$value['db_field']]["tmp_name"]));
+							$image = file_get_contents(addslashes($urlImage));
+							if(!empty($image)) {
+								$image = base64_encode($image);
+								$image = 'data:image/'.$expl[1].';base64,'.$image;
+								$admin_data[$value['db_field']] = $image;
+							}
+						}
+					}
+					continue;
+				}
+			
 				if(!empty($value['required'])) {
 					$this->form_validation->set_rules($value['db_field'], $value['label'], 'trim|htmlspecialchars|encode_php_tags|prep_for_form|required|xss_clean');
 
@@ -248,6 +273,8 @@ class Ketidakpuasan extends MY_Admin {
 		$this->_data['input_list'] 			= $this->get_input_field_new($data);
 
 		$this->_data['ajax_action_edit'] 	= site_url($this->_module_controller . 'do_edit_ajax');
+		$this->_data['ajax_image_edit'] 	= site_url($this->_module_controller . 'do_image_ajax');
+
 		$this->load->view('form_edit', $this->_data);
 	}
 
@@ -260,6 +287,23 @@ class Ketidakpuasan extends MY_Admin {
 		$field_pk 	= '';
 
 		foreach ($input_list as $key => $value) {
+			if($value['input_type'] == 'file') {
+				if(!empty($_POST['filenames'][0])) {
+					$expl = explode('.', $_POST['filenames'][0]);
+					if(in_array($expl[1], ['ico','png','jpg'])) {
+						$urlImage = site_url('assets/backstage/upload/'.$_POST['filenames'][0]);
+						// $image = file_get_contents(addslashes($_FILES[$value['db_field']]["tmp_name"]));
+						$image = file_get_contents(addslashes($urlImage));
+						if(!empty($image)) {
+							$image = base64_encode($image);
+							$image = 'data:image/'.$expl[1].';base64,'.$image;
+							$admin_data[$value['db_field']] = $image;
+						}
+					}
+				}
+				continue;
+			}
+
 			if(!empty($value['same_related'])) {
 				$tmp = $this->input->post($value['same_related']);
 				if($tmp != $this->input->post($value['db_field'])) {
@@ -283,6 +327,7 @@ class Ketidakpuasan extends MY_Admin {
 				if(!empty($value['data_md5']) AND $value['data_md5']) {
 					$admin_data[$value['db_field']] = md5($post_value);
 				}
+
 			}
 
 			if(!empty($value['db_pk']) AND $value['db_pk']) {
@@ -353,6 +398,50 @@ class Ketidakpuasan extends MY_Admin {
 
 		echo json_encode($res);
 	}
+
+	function do_image_ajax() {
+        $res = array(
+            'err_msg' 		=> '',
+            'success_msg' 	=> '',
+        );
+
+        if(!$this->do_image()) $res['err_msg'] = $this->_data['err_msg'];
+        $res['success_msg'] = !empty($this->_data['success_msg']) ? $this->_data['success_msg'] : '';
+        $res['files'] = !empty($this->_data['files']) ? $this->_data['files'] : '';
+
+        echo json_encode($res);
+    }
+
+    function do_image() {
+        $status = true;
+        $this->_data['files'] 		= array();
+        $this->_data['success_msg'] = '';
+        $this->_data['err_msg'] 	= '';
+
+        if(!empty($_FILES)) {
+            $uploaddir = 'assets/backstage/upload/';
+            foreach($_FILES as $file)
+            {
+                if(move_uploaded_file($file['tmp_name'], $uploaddir .basename($file['name'])))
+                {
+                    $files[] = $file['name'];
+                }
+                else
+                {
+                    $status = false;
+                }
+            }
+
+            if($status) {
+                $this->_data['success_msg'] = 'Upload data success.';
+                $this->_data['files'] = $files;
+            } else {
+                $this->_data['err_msg'] = 'Upload file failed';
+            }
+        }
+
+        return $status;
+    }
 	
 }
 

@@ -62,7 +62,7 @@
         <p></p>
     </div>
 	<div class="example-box-wrapper">
-        <form method="post" class="form-horizontal bordered-row" id="dynamic_form" data-parsley-validate>
+        <form method="post" enctype="multipart/form-data" class="form-horizontal bordered-row" id="dynamic_form" data-parsley-validate>
             <?php foreach($input_list as $val) : ?>
                 <?php if(!empty($val['db_pk'])) : ?>
                     <?php continue; ?>
@@ -79,6 +79,8 @@
                             </select>
                         <?php elseif($val['input_type'] == 'textarea') : ?>
                             <textarea name="<?php echo $val['db_field']; ?>" id="<?php echo $val['db_field']; ?>" <?php echo $val['input_attr']; ?> <?php echo (!empty($val['data_edit']['required']) ? $val['data_edit']['required'] : ''); ?> <?php echo (!empty($val['data_edit']['input_disabled']) ? $val['data_edit']['input_disabled'] : ''); ?>></textarea>
+                        <?php elseif($val['input_type'] == 'file') : ?>
+                            <input type="file" name="<?php echo $val['db_field']; ?>" id="<?php echo $val['db_field']; ?>" <?php echo $val['input_attr']; ?> <?php echo (!empty($val['data_edit']['required']) ? $val['data_edit']['required'] : ''); ?> <?php echo (!empty($val['data_edit']['input_disabled']) ? $val['data_edit']['input_disabled'] : ''); ?> />
                         <?php else : ?>
                             <input name="<?php echo $val['db_field']; ?>" id="<?php echo $val['db_field']; ?>" <?php echo $val['input_attr']; ?> <?php echo (!empty($val['required']) ? $val['required'] : ''); ?> <?php echo (!empty($val['input_disabled']) ? $val['input_disabled'] : ''); ?> />
                         <?php endif; ?>
