@@ -66,6 +66,11 @@ class MY_Admin extends MY_Controller {
                         'url_link' => site_url('backend_setting/setting/page_content_ajax'),
                         'icon' => '<i class="glyph-icon icon-elusive-cog"></i>',
 					),
+					array(
+						'label' => 'Ketidakpuasan',
+                        'url_link' => site_url('backend_ketidakpuasan/ketidakpuasan/page_content_ajax'),
+                        'icon' => '<i class="glyph-icon icon-dot-circle-o"></i>',
+					),
                     array(
                         'label' => 'Laporan Transaksi',
                         'url_link' => site_url('backend_transaksi/transaksi/page_content_ajax'),

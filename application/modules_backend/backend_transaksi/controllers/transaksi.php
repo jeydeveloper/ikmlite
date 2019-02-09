@@ -38,6 +38,10 @@ class Transaksi extends MY_Admin
                 'field_name' 			=> 'butt_status',
                 'just_info' 			=> true,
             ),
+            array(
+                'field_name'            => 'ktps_nama',
+                'just_info'             => true,
+            ),
         );
 
         return $additional_field;
@@ -60,6 +64,11 @@ class Transaksi extends MY_Admin
                 'title_header_column' 	=> 'Status',
                 'field_name' 			=> $this->_table_field_pref . 'butt_status',
                 'no_order'				=> 2,
+            ),
+            array(
+                'title_header_column'   => 'Ketidakpuasan',
+                'field_name'            => $this->_table_field_pref . 'ktps_nama',
+                'no_order'              => 2,
             ),
         );
 
@@ -140,7 +149,8 @@ class Transaksi extends MY_Admin
     function lists_ajax_grid() {
         $this->load->helper('mydatatable');
         $table 		= $this->db->dbprefix . $this->_table_name;
-        $table 		.= ' LEFT JOIN ' . $this->db->dbprefix . 'button ON (trans_butt_id = butt_id) ';
+        $table      .= ' LEFT JOIN ' . $this->db->dbprefix . 'button ON (trans_butt_id = butt_id) ';
+        $table 		.= ' LEFT JOIN ' . $this->db->dbprefix . 'ketidakpuasan ON (trans_ktps_id = ktps_id) ';
         $primaryKey = $this->_table_pk;
         $column_list = $this->get_show_column();
         $columns = array();
@@ -187,10 +197,13 @@ class Transaksi extends MY_Admin
             'rgba(110,120,220,0.75)',
             'rgba(30,30,30,0.75)',
             'rgba(140,10,140,0.75)',
-            'rgba(50,50,50,0.75)',
-            'rgba(100,100,200,0.75)',
-            'rgba(10,10,10,0.75)',
-            'rgba(25,25,25,0.75)',
+            'rgba(102,255,51,0.75)',
+            'rgba(102,51,255,0.75)',
+            'rgba(153,51,102,0.75)',
+            'rgba(204,102,102,0.75)',
+            'rgba(204,0,51,0.75)',
+            'rgba(0,0,204,0.75)',
+            'rgba(0,102,51,0.75)',
         ];
 
         $ret = [
